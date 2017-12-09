@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Template • TodoMVC</title>
+		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+		<!-- CSS overrides - remove if you don't need it -->
+		<link rel="stylesheet" href="css/app.css">
+	</head>
+	<body ng-app="myApp" ng-controller="demoCtrl">
+		<section class="todoapp">
+			<header class="header">
+				<h1>todos</h1>
+				<input class="new-todo" placeholder="What needs to be done?" autofocus ng-keydown="add($event)" ng-model="newTask">
+			</header>
+			<!-- This section should be hidden by default and shown when there are todos -->
+			<section class="main">
+				<input id="toggle-all" class="toggle-all" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<!-- These are here just to show the structure of the list items -->
+					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+					<li ng-class="{completed:item.iscompleted,editing:isEditing===item.id}" ng-repeat="item in takList">
+						<div class="view">
+							<input class="toggle" type="checkbox" checked>
+							<label ng-bind="item.name" ng-dblclick="edit(item.id)"></label>
+							<button class="destroy" ng-click="del(item.id)"></button>
+						</div>
+						<input class="edit" ng-model="item.name" ng-blur="success(itme.id)">
+					</li>
+				</ul>
+			</section>
+			<!-- This footer should hidden by default and shown when there are todos -->
+			<footer class="footer">
+				<!-- This should be `0 items left` by default -->
+				<span class="todo-count"><strong>0</strong> item left</span>
+				<!-- Remove this if you don't implement routing -->
+				<ul class="filters">
+					<li>
+						<a class="selected" href="#/">All</a>
+					</li>
+					<li>
+						<a href="#/active">Active</a>
+					</li>
+					<li>
+						<a href="#/completed">Completed</a>
+					</li>
+				</ul>
+				<!-- Hidden if no completed items are left ↓ -->
+				<button class="clear-completed">Clear completed</button>
+			</footer>
+		</section>
+		<footer class="info">
+			<p>Double-click to edit a todo</p>
+			<!-- Remove the below line ↓ -->
+			<p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+			<!-- Change this out with your name and url ↓ -->
+			<p>Created by <a href="http://todomvc.com">you</a></p>
+			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		</footer>
+		<!-- Scripts here. Don't remove ↓ -->
+		<script src="node_modules/todomvc-common/base.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+	<!-- 引包 -->
+	<script src="./node_modules/angular/angular.js"></script>
+	<script>
+		// 定义模块
+		angular.module('myApp',[])
+		.controller('demoCtrl',function($scope){
+			$scope.takList = [
+				{id:1,name:'吃饭',iscompleted:false},
+				{id:2,name:'睡觉',iscompleted:true},
+				{id:3,name:'打豆豆',iscompleted:false},
+			];
+			// 编辑状态
+			$scope.isEditing = -1;
+			$scope.newTask = '';
+			// 添加
+			$scope.add = function($event) {
+				if($event.keyCode == 13){
+					if(!this.newTask.trim()){
+						return;
+					}
+					this.takList.push({id:Math.random(),name:this.newTask,iscompleted:false});
+					this.newTask = '';
+				}
+			};
+			// 删除
+			$scope.del = function(id){
+				var index = this.takList.findIndex((item,index)=>{
+					return id == item.id;
+				})
+				this.takList.splice(index,1);
+			}
+			// 修改
+			$scope.edit = function(id){
+				// console.log(id);
+				this.isEditing = id;
+			}
+			// 修改成功
+			$scope.success = function(id){
+				this.isEditing = id+1;
+			}
+		})
+	</script>
+</html>
