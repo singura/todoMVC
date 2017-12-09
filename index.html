@@ -24,7 +24,7 @@
 					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
 					<li ng-class="{completed:item.iscompleted,editing:isEditing===item.id}" ng-repeat="item in takList">
 						<div class="view">
-							<input class="toggle" type="checkbox" checked>
+							<input class="toggle" type="checkbox" checked ng-model="item.iscompleted">
 							<label ng-bind="item.name" ng-dblclick="edit(item.id)"></label>
 							<button class="destroy" ng-click="del(item.id)"></button>
 						</div>
@@ -70,11 +70,7 @@
 		// 定义模块
 		angular.module('myApp',[])
 		.controller('demoCtrl',function($scope){
-			$scope.takList = [
-				{id:1,name:'吃饭',iscompleted:false},
-				{id:2,name:'睡觉',iscompleted:true},
-				{id:3,name:'打豆豆',iscompleted:false},
-			];
+			$scope.takList = JSON.parse(localStorage.getItem("todos"));
 			// 编辑状态
 			$scope.isEditing = -1;
 			$scope.newTask = '';
@@ -86,6 +82,7 @@
 					}
 					this.takList.push({id:Math.random(),name:this.newTask,iscompleted:false});
 					this.newTask = '';
+					this.save();
 				}
 			};
 			// 删除
@@ -94,6 +91,7 @@
 					return id == item.id;
 				})
 				this.takList.splice(index,1);
+				this.save();
 			}
 			// 修改
 			$scope.edit = function(id){
@@ -103,6 +101,11 @@
 			// 修改成功
 			$scope.success = function(id){
 				this.isEditing = id+1;
+				this.save();
+			}
+			// 保存到内存
+			$scope.save = function(){
+				localStorage.setItem("todos",JSON.stringify($scope.takList));
 			}
 		})
 	</script>
